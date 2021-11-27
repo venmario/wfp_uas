@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('username', 20);
             $table->string('password', 20);
             $table->string('fullname');
+            $table->string('status', 20)->default('active');
             $table->timestamps();
         });
     }
