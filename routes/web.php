@@ -14,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layoutAdmin.sbadmin');
 });
+
+Route::resource('brand', 'BrandController');
+Route::resource('category', 'CategoryController');
+Route::resource('image', 'ImageController');
+Route::resource('product', 'ProductController');
+Route::resource('role', 'RoleController');
+Route::resource('transaction', 'TransactionController');
+Route::resource('transactionDetail', 'TransactionDetailController');
+Route::resource('user', 'UserController');
