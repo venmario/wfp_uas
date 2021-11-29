@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.create');
     }
 
     /**
@@ -35,7 +35,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new User();
+
+        $data->username = $request->get('username');
+        $data->password = $request->get('password');
+        $data->fullname = $request->get('fullname');
+        $data->status = $request->get('status');
+        $data->role_id = $request->get('roleId');
+        $data->save();
+        return redirect()->route('user.index')->with('status', 'User is added');
     }
 
     /**
@@ -80,6 +88,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $this->authorize('delete-permission', $user);
+
+        try {
+            $user->delete();
+            return redirect()->route('user.index')->with('status', 'Data user succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($user);
+            return redirect()->route('user.index')->with('error', $msg);
+        }
     }
 }

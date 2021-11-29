@@ -24,7 +24,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        //
+        return view('brand.create');
     }
 
     /**
@@ -35,7 +35,11 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new Brand();
+
+        $data->name = $request->get('name');
+        $data->save();
+        return redirect()->route('brand.index')->with('status', 'Brand is added');
     }
 
     /**
@@ -57,7 +61,8 @@ class BrandController extends Controller
      */
     public function edit(Brand $brand)
     {
-        //
+        $data = $brand;
+        return view("brand.edit", compact('data'));
     }
 
     /**
@@ -69,7 +74,9 @@ class BrandController extends Controller
      */
     public function update(Request $request, Brand $brand)
     {
-        //
+        $brand->name = $request->get('name');
+        $brand->save();
+        return redirect()->route('brand.index')->with('status', 'Data brand succesfully changed');
     }
 
     /**
@@ -80,6 +87,14 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
-        //
+        $this->authorize('delete-permission', $brand);
+        
+        try {
+            $brand->delete();
+            return redirect()->route('brand.index')->with('status', 'Data brand succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($brand);
+            return redirect()->route('brand.index')->with('error', $msg);
+        }
     }
 }

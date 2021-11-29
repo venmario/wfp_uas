@@ -24,7 +24,7 @@ class TransactionDetailController extends Controller
      */
     public function create()
     {
-        //
+        return view('transactionDetail.create');
     }
 
     /**
@@ -35,7 +35,15 @@ class TransactionDetailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new TransactionDetail();
+
+        $data->quantity = $request->get('quantity');
+        $data->price = $request->get('price');
+        $data->subtotal = $request->get('subtotal');
+        $data->product_id = $request->get('productId');
+        $data->transaction_id = $request->get('transactionId');
+        $data->save();
+        return redirect()->route('transaction.index')->with('status', 'Transaction is added');
     }
 
     /**
@@ -57,7 +65,8 @@ class TransactionDetailController extends Controller
      */
     public function edit(TransactionDetail $transactionDetail)
     {
-        //
+        $data = $transactionDetail;
+        return view("transactionDetail.edit", compact('data'));
     }
 
     /**
@@ -69,7 +78,13 @@ class TransactionDetailController extends Controller
      */
     public function update(Request $request, TransactionDetail $transactionDetail)
     {
-        //
+        $transactionDetail->quantity = $request->get('quantity');
+        $transactionDetail->price = $request->get('price');
+        $transactionDetail->subtotal = $request->get('subtotal');
+        $transactionDetail->product_id = $request->get('productId');
+        $transactionDetail->transaction_id = $request->get('transactionId');
+        $transactionDetail->save();
+        return redirect()->route('transactionDetail.index')->with('status', 'Data transaction detail succesfully changed');
     }
 
     /**
@@ -80,6 +95,14 @@ class TransactionDetailController extends Controller
      */
     public function destroy(TransactionDetail $transactionDetail)
     {
-        //
+        $this->authorize('delete-permission', $transactionDetail);
+
+        try {
+            $transactionDetail->delete();
+            return redirect()->route('transactionDetail.index')->with('status', 'Data transaction detail succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($transactionDetail);
+            return redirect()->route('transactionDetail.index')->with('error', $msg);
+        }
     }
 }

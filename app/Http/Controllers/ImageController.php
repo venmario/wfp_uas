@@ -24,7 +24,7 @@ class ImageController extends Controller
      */
     public function create()
     {
-        //
+        return view('image.create');
     }
 
     /**
@@ -35,7 +35,17 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new Image();
+
+        $file = $request->file('image');
+        $imgFolder = 'image';
+        $imgFile = time() . "_" . $file->getClientOriginalName();
+        $file->move($imgFolder, $imgFile);
+        $data->logo = $imgFile;
+        $data->name = $request->get('name');
+        $data->product_id = $request->get('productId');
+        $data->save();
+        return redirect()->route('image.index')->with('status', 'Image is added');
     }
 
     /**

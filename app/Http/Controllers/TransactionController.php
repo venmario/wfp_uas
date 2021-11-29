@@ -24,7 +24,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+        return view('transaction.create');
     }
 
     /**
@@ -35,7 +35,13 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new Transaction();
+
+        $data->status = $request->get('status');
+        $data->total = $request->get('total');
+        $data->user_id = $request->get('userId');
+        $data->save();
+        return redirect()->route('transaction.index')->with('status', 'Transaction is added');
     }
 
     /**
@@ -57,7 +63,8 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        $data = $transaction;
+        return view("transaction.edit", compact('data'));
     }
 
     /**
@@ -69,7 +76,11 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        $transaction->status = $request->get('status');
+        $transaction->total = $request->get('total');
+        $transaction->user_id = $request->get('userId');
+        $transaction->save();
+        return redirect()->route('transaction.index')->with('status', 'Data transaction succesfully changed');
     }
 
     /**
@@ -80,6 +91,14 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $this->authorize('delete-permission', $transaction);
+
+        try {
+            $transaction->delete();
+            return redirect()->route('transaction.index')->with('status', 'Data transaction succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($transaction);
+            return redirect()->route('transaction.index')->with('error', $msg);
+        }
     }
 }

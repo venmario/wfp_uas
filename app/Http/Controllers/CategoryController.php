@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Catch_;
 
 class CategoryController extends Controller
 {
@@ -24,7 +25,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('category.create');
     }
 
     /**
@@ -35,7 +36,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new Category();
+
+        $data->name = $request->get('name');
+        $data->save();
+        return redirect()->route('category.index')->with('status', 'Category is added');
     }
 
     /**
@@ -57,7 +62,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        $data = $category;
+        return view("category.edit", compact('data'));
     }
 
     /**
@@ -69,7 +75,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $category->name = $request->get('name');
+        $category->save();
+        return redirect()->route('category.index')->with('status', 'Data category succesfully changed');
     }
 
     /**
@@ -80,6 +88,14 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $this->authorize('delete-permission', $category);
+
+        try {
+            $category->delete();
+            return redirect()->route('category.index')->with('status', 'Data category succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($category);
+            return redirect()->route('category.index')->with('error', $msg);
+        }
     }
 }

@@ -24,7 +24,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        return view('role.create');
     }
 
     /**
@@ -35,7 +35,11 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new Role();
+
+        $data->name = $request->get('name');
+        $data->save();
+        return redirect()->route('role.index')->with('status', 'Role is added');
     }
 
     /**
@@ -57,7 +61,8 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        //
+        $data = $role;
+        return view("role.edit", compact('data'));
     }
 
     /**
@@ -69,7 +74,9 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        //
+        $role->name = $request->get('name');
+        $role->save();
+        return redirect()->route('role.index')->with('status', 'Data role succesfully changed');
     }
 
     /**
@@ -80,6 +87,14 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $this->authorize('delete-permission', $role);
+
+        try {
+            $role->delete();
+            return redirect()->route('role.index')->with('status', 'Data role succesfully deleted');
+        } catch (\PDOException $e) {
+            $msg =  $this->handleAllRemoveChild($role);
+            return redirect()->route('role.index')->with('error', $msg);
+        }
     }
 }
