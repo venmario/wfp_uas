@@ -37,11 +37,13 @@ class ProductController extends Controller
     {
         $data = new Product();
 
+        if ($request->get('ram') != null)
+            $spec = $request->get('ram') . ";" . $request->get('camera') . ";" . $request->get('screen') . ";" . $request->get('battery');
+        else
+            $spec = $request->get('spec');
+
         $data->name = $request->get('name');
-        $data->ram = $request->get('ram');
-        $data->camera = $request->get('camera');
-        $data->screen = $request->get('screen');
-        $data->battery = $request->get('battery');
+        $data->spec = $spec;
         $data->stock = $request->get('stock');
         $data->price = $request->get('price');
         $data->category_id = $request->get('categoryId');
@@ -82,11 +84,13 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        if ($request->get('ram') != null)
+            $spec = $request->get('ram') . ";" . $request->get('camera') . ";" . $request->get('screen') . ";" . $request->get('battery');
+        else
+            $spec = $request->get('spec');
+
         $product->name = $request->get('name');
-        $product->ram = $request->get('ram');
-        $product->camera = $request->get('camera');
-        $product->screen = $request->get('screen');
-        $product->battery = $request->get('battery');
+        $product->spec = $spec;
         $product->stock = $request->get('stock');
         $product->price = $request->get('price');
         $product->category_id = $request->get('categoryId');

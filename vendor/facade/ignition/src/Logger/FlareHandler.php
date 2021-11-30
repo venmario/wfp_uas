@@ -33,33 +33,33 @@ class FlareHandler extends AbstractProcessingHandler
         $this->minimumReportLogLevel = $level;
     }
 
-    protected function write(array $record): void
+    protected function write(array $report): void
     {
-        if (! $this->shouldReport($record)) {
+        if (! $this->shouldReport($report)) {
             return;
         }
 
-        if ($this->hasException($record)) {
+        if ($this->hasException($report)) {
             /** @var Throwable $throwable */
-            $throwable = $record['context']['exception'];
+            $throwable = $report['context']['exception'];
 
             collect(Ignition::$tabs)
                 ->each(function (Tab $tab) use ($throwable) {
                     $tab->beforeRenderingErrorPage($this->flare, $throwable);
                 });
 
-            $this->flare->report($record['context']['exception']);
+            $this->flare->report($report['context']['exception']);
 
             return;
         }
 
         if (config('flare.send_logs_as_events')) {
-            if ($this->hasValidLogLevel($record)) {
+            if ($this->hasValidLogLevel($report)) {
                 $this->flare->reportMessage(
-                    $record['message'],
-                    'Log ' . Logger::getLevelName($record['level']),
-                    function (Report $flareReport) use ($record) {
-                        foreach ($record['context'] as $key => $value) {
+                    $report['message'],
+                    'Log ' . Logger::getLevelName($report['level']),
+                    function (Report $flareReport) use ($report) {
+                        foreach ($report['context'] as $key => $value) {
                             $flareReport->context($key, $value);
                         }
                     }

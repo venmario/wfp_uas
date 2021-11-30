@@ -13,10 +13,25 @@ class CategorySeeder extends Seeder
     {
         //
         DB::table('categories')->insert([
-            'name' => 'Gaming',
+            'name' => 'Laptop',
         ]);
         DB::table('categories')->insert([
-            'name' => 'Notebook',
+            'name' => 'Ram',
+        ]);
+        DB::table('categories')->insert([
+            'name' => 'Battery',
+        ]);
+        DB::table('categories')->insert([
+            'name' => 'SSD',
+        ]);
+        DB::table('categories')->insert([
+            'name' => 'HDD',
+        ]);
+        DB::table('categories')->insert([
+            'name' => 'Mouse',
+        ]);
+        DB::table('categories')->insert([
+            'name' => 'Keyboard',
         ]);
     }
 }
